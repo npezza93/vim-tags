@@ -19,17 +19,15 @@ class VimTagsCommand < Bundler::Plugin::API
 
   def gem_paths
     Bundler.load.specs.filter_map do |spec|
-      path = File.join(spec.full_gem_path, "tags")
+      next if spec.name == "bundler" ||
+        !File.exist?(File.join(spec.full_gem_path, "tags"))
 
-      next if spec.name == "bundler" || !File.exist?(path)
-
-      path
+      spec.full_gem_path
     end
   end
 
   def ruby_paths
-    $:.map { |path| File.join(path, "tags") }.
-      select { |path| File.exist?(path) }
+    $:.select { |path| File.exist?(File.join(path, "tags")) }
   end
 end
 
