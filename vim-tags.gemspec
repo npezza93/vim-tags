@@ -2,11 +2,12 @@
 
 Gem::Specification.new do |spec|
   spec.name    = "vim-tags"
-  spec.version = "0.2.0"
+  spec.version = "0.3.0"
   spec.authors = ["Nick Pezza"]
   spec.email   = ["pezza@hey.com"]
 
-  spec.summary = "Generate cache file of all paths to tags files of dependencies"
+  spec.summary =
+    "Generate cache file of all paths to tags files of dependencies"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 2.7.0"
 
