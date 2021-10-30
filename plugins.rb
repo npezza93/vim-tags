@@ -25,12 +25,12 @@ class VimTagsCommand < Bundler::Plugin::API
     write_to_file(
       File.join(Bundler.app_config_path, ".ruby_tag_files"),
       "Writing ruby tag cache to",
-      { tags: ruby_tags, paths: $: }
+      { tags: ruby_tags, paths: $:.join(",") }
     )
   end
 
   def ruby_tags
-    $:.select { |path| File.exist?(File.join(path, "tags")) }
+    $:.select { |path| File.exist?(File.join(path, "tags")) }.join(",")
   end
 
   def gem_tags
@@ -40,11 +40,11 @@ class VimTagsCommand < Bundler::Plugin::API
       next unless File.exist?(tag_path)
 
       tag_path
-    end
+    end.sort.join(",")
   end
 
   def gem_paths
-    gem_specs.to_h { |spec| [spec.name, spec.full_gem_path] }
+    gem_specs.map(&:full_gem_path).sort.join(",")
   end
 
   def gem_specs

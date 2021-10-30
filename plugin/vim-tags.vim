@@ -1,24 +1,25 @@
 function! LoadRubyTags()
-  let l:load_ruby_tags_dir = finddir('.git/..', expand('%:p:h').';')
+  let l:project_directory = finddir('.git/..', expand('%:p:h').';')
 
-  if !empty(l:load_ruby_tags_dir)
-    let l:load_ruby_tags_gem_tags_path = l:load_ruby_tags_dir . '/.bundle/.gem_tag_files'
+  if !empty(l:project_directory)
+    let l:gem_tag_files_path = l:project_directory . '/.bundle/.gem_tag_files'
 
-    if !filereadable(l:load_ruby_tags_gem_tags_path)
+    if !filereadable(l:gem_tag_files_path)
       let l:install_response = system('bundler plugin install vim-tags')
       let l:command_response = system('bundler vim-tags')
     endif
 
-    let g:gem_files = json_decode(readfile(l:load_ruby_tags_gem_tags_path))
-    let l:gem_comma_tags = join(values(g:gem_files), "/tags,") . '/tags'
-    let l:ruby_comma_tags = join(readfile(l:load_ruby_tags_dir . '/.bundle/.ruby_tag_files'), "/tags,") . '/tags'
+    let l:gems = json_decode(readfile(l:gem_tag_files_path))
+    let l:ruby = json_decode(readfile(l:project_directory . '/.bundle/.ruby_tag_files'))
 
-    setlocal includeexpr=get(g:gem_files,v:fname,v:fname)
-    setlocal suffixesadd=/
-    cnoremap <buffer><expr> <Plug><cfile> get(g:gem_files,expand("<cfile>"),"\022\006")
-
-    let &l:tags = &tags . ',' . l:gem_comma_tags . ',' . l:ruby_comma_tags
+    let &l:tags = &tags . ',' . l:gems['tags'] . ',' . l:ruby['tags']
+    let &l:path = &path . ',' . l:gems['paths'] . ',' . l:ruby['paths']
   endif
 endfunction
 
-autocmd FileType ruby :call LoadRubyTags()
+augroup rubypath
+  autocmd!
+  autocmd FileType ruby setlocal suffixesadd+=.rb
+
+  autocmd FileType ruby :call LoadRubyTags()
+augroup END
