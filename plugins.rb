@@ -44,7 +44,7 @@ class VimTagsCommand < Bundler::Plugin::API
   end
 
   def gem_paths
-    gem_specs.map(&:full_gem_path).sort.join(",")
+    gem_specs.map { |spec| File.join(spec.full_gem_path, "lib") }.sort.join(",")
   end
 
   def gem_specs
