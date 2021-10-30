@@ -52,7 +52,7 @@ class VimTagsCommand < Bundler::Plugin::API
   end
 
   def write_to_file(file_path, description, payload)
-    puts "#{description} to #{cache_file}"
+    puts "#{description} to #{file_path}"
 
     File.open(file_path, "w") do |f|
       f.truncate(0)
