@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name    = "vim-tags"
-  spec.version = "0.4.2"
+  spec.version = "1.0.0"
   spec.authors = ["Nick Pezza"]
   spec.email   = ["pezza@hey.com"]
 
