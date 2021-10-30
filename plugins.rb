@@ -7,35 +7,58 @@ class VimTagsCommand < Bundler::Plugin::API
   command "vim-tags"
 
   def exec(*)
-    cache_file = File.join(Bundler.app_config_path, ".gem_tag_files")
+    write_gem_file
+    write_ruby_file
+  end
 
-    puts "\nWriting gem file tag cache to #{cache_file}"
+  private
 
-    File.open(cache_file, "w") do |f|
-      f.truncate(0)
+  def write_gem_file
+    write_to_file(
+      File.join(Bundler.app_config_path, ".gem_tag_files"),
+      "\nWriting gem file tag cache",
+      { tags: gem_tags, paths: gem_paths }
+    )
+  end
 
-      f.write gem_paths.to_json
-    end
+  def write_ruby_file
+    write_to_file(
+      File.join(Bundler.app_config_path, ".ruby_tag_files"),
+      "Writing ruby tag cache to",
+      { tags: ruby_tags, paths: $: }
+    )
+  end
 
-    cache_file = File.join(Bundler.app_config_path, ".ruby_tag_files")
+  def ruby_tags
+    $:.select { |path| File.exist?(File.join(path, "tags")) }
+  end
 
-    puts "Writing ruby tag cache to #{cache_file}\n"
+  def gem_tags
+    gem_specs.filter_map do |spec|
+      tag_path = File.join(spec.full_gem_path, "tags")
 
-    File.open(cache_file, "w") do |f|
-      f.truncate(0)
+      next unless File.exist?(tag_path)
 
-      f.write ruby_paths
+      tag_path
     end
   end
 
   def gem_paths
-    Bundler.load.specs.
-      select { |spec| File.exist?(File.join(spec.full_gem_path, "tags")) }.
-      to_h { |spec| [spec.name, spec.full_gem_path] }
+    gem_specs.to_h { |spec| [spec.name, spec.full_gem_path] }
   end
 
-  def ruby_paths
-    $:.select { |path| File.exist?(File.join(path, "tags")) }
+  def gem_specs
+    @gem_specs ||= Bundler.load.specs
+  end
+
+  def write_to_file(file_path, description, payload)
+    puts "#{description} to #{cache_file}"
+
+    File.open(file_path, "w") do |f|
+      f.truncate(0)
+
+      f.write payload.to_json
+    end
   end
 end
 
