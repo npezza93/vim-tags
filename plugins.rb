@@ -54,6 +54,9 @@ class VimTagsCommand < Bundler::Plugin::API
   def write_to_file(file_path, description, payload)
     puts "#{description} to #{file_path}"
 
+    dirname = File.dirname(file_path)
+    FileUtils.mkdir_p(dirname) unless File.directory?(dirname)
+
     File.open(file_path, "w") do |f|
       f.truncate(0)
 
