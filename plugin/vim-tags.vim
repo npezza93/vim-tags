@@ -1,7 +1,7 @@
 function! LoadRubyTags()
   let l:project_directory = finddir('.git/..', expand('%:p:h').';')
 
-  if !empty(l:project_directory)
+  if !empty(l:project_directory) && filereadable(l:project_directory . 'Gemfile')
     let l:gem_tag_files_path = l:project_directory . '/.bundle/.gem_tag_files'
     let l:gem_paths_path = l:project_directory . '/.bundle/.gem_paths'
 
