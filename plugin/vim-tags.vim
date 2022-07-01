@@ -1,7 +1,7 @@
 function! LoadRubyTags()
   let l:project_directory = finddir('.git/..', expand('%:p:h').';')
 
-  if !empty(l:project_directory) && filereadable(l:project_directory . 'Gemfile')
+  if !empty(l:project_directory) && filereadable(l:project_directory . '/Gemfile')
     let l:gem_tag_files_path = l:project_directory . '/.bundle/.gem_tag_files'
     let l:gem_paths_path = l:project_directory . '/.bundle/.gem_paths'
 
@@ -18,9 +18,9 @@ function! LoadRubyTags()
       let &l:tags = &tags . ',' . l:gems['tags'] . ',' . l:ruby['tags']
       let &l:path = &path . ',' . l:gems['paths'] . ',' . l:ruby['paths']
 
-      setlocal includeexpr=get(l:gem_paths,v:fname,v:fname)
-      setlocal suffixesadd=/
-      cnoremap <buffer><expr> <Plug><cfile> get(l:gem_paths,expand("<cfile>"),"\022\006")
+      " setlocal includeexpr=get(l:gem_paths,v:fname,v:fname)
+      " setlocal suffixesadd=/
+      " cnoremap <buffer><expr> <Plug><cfile> get(l:gem_paths,expand("<cfile>"),"\022\006")
     endif
   endif
 endfunction
