@@ -9,6 +9,7 @@ class VimTagsCommand < Bundler::Plugin::API
   def exec(*)
     write_gem_file
     write_ruby_file
+    write_gem_paths_file
   end
 
   private
@@ -18,6 +19,14 @@ class VimTagsCommand < Bundler::Plugin::API
       File.join(Bundler.app_config_path, ".gem_tag_files"),
       "\nWriting gem file tag cache",
       { tags: gem_tags, paths: gem_paths }
+    )
+  end
+
+  def write_gem_paths_file
+    write_to_file(
+      File.join(Bundler.app_config_path, ".gem_paths"),
+      "\nWriting gem paths cache",
+      gem_specs.map { |spec| [spec.name, spec.full_gem_path] }.to_h.to_json
     )
   end
 

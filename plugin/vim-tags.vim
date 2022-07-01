@@ -3,6 +3,7 @@ function! LoadRubyTags()
 
   if !empty(l:project_directory)
     let l:gem_tag_files_path = l:project_directory . '/.bundle/.gem_tag_files'
+    let l:gem_paths_path = l:project_directory . '/.bundle/.gem_paths'
 
     if !filereadable(l:gem_tag_files_path) && !get(g:, 'vim_tags_skip_bundle', 0)
       let l:install_response = system('bundler plugin install vim-tags')
@@ -10,11 +11,16 @@ function! LoadRubyTags()
     endif
 
     if filereadable(l:gem_tag_files_path)
-      let l:gems = json_decode(readfile(l:gem_tag_files_path))
-      let l:ruby = json_decode(readfile(l:project_directory . '/.bundle/.ruby_tag_files'))
+      let l:gems  = json_decode(readfile(l:gem_tag_files_path))
+      let l:ruby  = json_decode(readfile(l:project_directory . '/.bundle/.ruby_tag_files'))
+      let l:gem_paths = json_decode(readfile(l:gem_paths_path))
 
       let &l:tags = &tags . ',' . l:gems['tags'] . ',' . l:ruby['tags']
       let &l:path = &path . ',' . l:gems['paths'] . ',' . l:ruby['paths']
+
+      setlocal includeexpr=get(l:gem_paths,v:fname,v:fname)
+      setlocal suffixesadd=/
+      cnoremap <buffer><expr> <Plug><cfile> get(l:gem_paths,expand("<cfile>"),"\022\006")
     endif
   endif
 endfunction
