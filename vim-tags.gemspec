@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name    = "vim-tags"
-  spec.version = "1.0.3"
+  spec.version = "1.0.4"
   spec.authors = ["Nick Pezza"]
   spec.email   = ["pezza@hey.com"]
 
@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
     `git ls-files -z`.split("\x0").reject do |f|
-      (f == __FILE__) || f.match(%r{\A(?:(?:test|bin|lib)/|\.(?:git))}) ||
+      (f == __FILE__) || f.match(%r{\A(?:(?:test|bin)/|\.(?:git))}) ||
         f.end_with?("md") || f.end_with?("txt")
     end
   end
